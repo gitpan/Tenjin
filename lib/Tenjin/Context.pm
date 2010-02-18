@@ -1,67 +1,64 @@
 package Tenjin::Context;
 
 use strict;
+use warnings;
 
 sub new {
-	my ($class, $this) = @_;
+	my ($class, $self) = @_;
 
-	$this = {} unless defined($this);
-	return bless($this, $class);
+	$self ||= {};
+	return bless $self, $class;
 }
 
 sub evaluate {
-	my ($this, $_script) = @_;
+	my ($self, $script, $filename) = @_;
 
-	return $this->to_func($_script)->($this);
+	my $context = $self;
+	$script = ($script =~ /\A.*\Z/s) && $& if $Tenjin::BYPASS_TAINT;
+	my $s = $filename ? "# line 1 \"$filename\"\n" : '';  # line directive
+	$s .= $script;
+
+	my $ret;
+	if ($Tenjin::USE_STRICT) {
+		$ret = eval($s);
+	} else {
+		no strict;
+		$ret = eval($s);
+		use strict;
+	}
+	
+	return $ret;
 }
 
 sub to_func {
-	my ($this, $_script) = @_;
+	my ($self, $script, $filename) = @_;
 
-	my $_s = "sub { my (\$_context) = \@_; $_script }";
-	my $_func;
+	$script = ($script =~ /\A.*\Z/s) && $& if $Tenjin::BYPASS_TAINT;
+	my $s = $filename ? "# line 1 \"$filename\"\n" : '';  # line directive
+	$s .= "sub { my (\$context) = \@_; $script }";
+	
+	my $ret;
 	if ($Tenjin::USE_STRICT) {
-		$_func = eval($_s);
+		$ret = eval($s);
 	} else {
 		no strict;
-		$_func = eval($_s);
+		$ret = eval($s);
 		use strict;
 	}
-
-	if ($@) {
-		die "Tenjin::Context: Failed rendering, ", $@;
-	}
-
-	return $_func;
+	
+	return $ret;
 }
 
-## ex. {'x'=>10, 'y'=>20} ==> "my $x = $_context->{'x'}; my $y = $_context->{'y'}; "
 sub _build_decl {
-	my $this = shift;
+	my $self = shift;
 
-	my @buf = ();
-	foreach (keys %$this) {
-		push(@buf, "my \$$_ = \$_context->{'$_'}; ") unless $_ eq '_context';
+	my $s = '';
+	foreach my $k (keys %$self) {
+		next if $k eq '_context' || $k eq 'context';
+		$s .= "my \$$k = \$context->{'$k'}; ";
 	}
-
-	return join('', @buf);
+	return $s;
 }
-
-sub escape {
-	return shift;
-}
-
-*_p			= *Tenjin::Util::_p;
-*_P			= *Tenjin::Util::_P;
-*escape     = *Tenjin::HTML::escape_xml;
-*escape_xml = *Tenjin::HTML::escape_xml;
-*encode_url = *Tenjin::HTML::encode_url;
-*checked    = *Tenjin::HTML::checked;
-*selected   = *Tenjin::HTML::selected;
-*disabled   = *Tenjin::HTML::disabled;
-*nl2br      = *Tenjin::HTML::nl2br;
-*text2html  = *Tenjin::HTML::text2html;
-*tagattr    = *Tenjin::HTML::tagattr;
 
 __PACKAGE__;
 
@@ -83,13 +80,14 @@ L<Tenjin>.
 
 =head1 AUTHOR
 
-Tenjin is developed by Makoto Kuwata at L<http://www.kuwata-lab.com/tenjin/>. Version 0.03 was tidied and CPANized from the original 0.0.2 source by Ido Perelmutter E<lt>ido50@yahoo.comE<gt>.
+Tenjin is developed by Makoto Kuwata at L<http://www.kuwata-lab.com/tenjin/>.
+The CPAN version was tidied and CPANized from the original 0.0.2 source (with later updates from Makoto Kuwata's tenjin github repository) by Ido Perlmuter E<lt>ido@ido50.netE<gt>.
 
-=head1 COPYRIGHT & LICENSE
+=head1 LICENSE AND COPYRIGHT
 
 Tenjin is licensed under the MIT license.
 
-	Copyright (c) 2007-2009 the aforementioned authors.
+	Copyright (c) 2007-2010 the aforementioned authors.
 
 	Permission is hereby granted, free of charge, to any person obtaining
 	a copy of this software and associated documentation files (the

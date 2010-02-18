@@ -1,6 +1,7 @@
 package Tenjin::Preprocessor;
 
 use strict;
+use warnings;
 
 our @ISA = ('Tenjin::Template');
 
@@ -13,10 +14,10 @@ sub expr_pattern {
 }
 
 sub add_expr {
-	my ($this, $bufref, $expr, $flag_escape) = @_;
+	my ($self, $bufref, $expr, $flag_escape) = @_;
 
-	$expr = "Tenjin::Util::_decode_params($expr)";
-	$this->SUPER::add_expr($bufref, $expr, $flag_escape);
+	$expr = "$self->{utils}->_decode_params($expr)";
+	$self->SUPER::add_expr($bufref, $expr, $flag_escape);
 }
 
 __PACKAGE__;
@@ -39,13 +40,14 @@ L<Tenjin>.
 
 =head1 AUTHOR
 
-Tenjin is developed by Makoto Kuwata at L<http://www.kuwata-lab.com/tenjin/>. Version 0.03 was tidied and CPANized from the original 0.0.2 source by Ido Perelmutter E<lt>ido50@yahoo.comE<gt>.
+Tenjin is developed by Makoto Kuwata at L<http://www.kuwata-lab.com/tenjin/>.
+The CPAN version was tidied and CPANized from the original 0.0.2 source (with later updates from Makoto Kuwata's tenjin github repository) by Ido Perlmuter E<lt>ido@ido50.netE<gt>.
 
-=head1 COPYRIGHT & LICENSE
+=head1 LICENSE AND COPYRIGHT
 
 Tenjin is licensed under the MIT license.
 
-	Copyright (c) 2007-2009 the aforementioned authors.
+	Copyright (c) 2007-2010 the aforementioned authors.
 
 	Permission is hereby granted, free of charge, to any person obtaining
 	a copy of this software and associated documentation files (the

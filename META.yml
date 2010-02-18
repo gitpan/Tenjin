@@ -2,7 +2,7 @@
 abstract: 'Fast templating engine with support for embedded Perl.'
 author:
   - 'Makoto Kuwata'
-  - 'Ido Perelmutter <ido50@yahoo.com>'
+  - 'Ido Perelmutter <ido@ido50.net>'
 build_requires:
   Test::More: 0
 distribution_type: module
@@ -21,4 +21,4 @@ requires:
   Encode: 0
 resources:
   license: http://www.opensource.org/licenses/mit-license.php
-version: 0.04
+version: 0.05
