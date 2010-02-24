@@ -7,7 +7,7 @@ use Tenjin::Preprocessor;
 use strict;
 use warnings;
 
-our $VERSION = 0.06;
+our $VERSION = 0.061;
 our $USE_STRICT = 0;
 our $ENCODING = 'utf8';
 our $BYPASS_TAINT   = 1; # unset if you like taint mode
@@ -41,7 +41,7 @@ Tenjin - Fast templating engine with support for embedded Perl.
 
 =head1 VERSION
 
-0.06
+0.061
 
 =head1 DESCRIPTION
 
@@ -62,7 +62,7 @@ a smaller number of packages than the original version. In particular, the
 Tenjin::Engine module no longer exists, and is now instead just the Tenjin
 module (i.e. this one).
 
-=item * Support for rendering templates from non-files sources (such as
+=item * Support for rendering templates from non-file sources (such as
 a database) is added.
 
 =item * Ability to set the encoding of your templates is added.
@@ -74,11 +74,12 @@ instead of internally.
 
 =back
 
-To make it clear, this version of Tenjin might somehow divert from the
-original Tenjin's roadmap. Although my aim is to be as compatible as
-possible (and this version is always updated with features and changes
-from the original), I cannot guarantee it. Please note that version 0.05
-of this module is NOT backwards compatible with previous versions.
+To make it clear, the CPAN version of Tenjin might find itself diverting
+a bit in the future from the original Tenjin's roadmap. Although my aim
+is to be as compatible as possible (and this version is always updated
+with features and changes from the original), I cannot guarantee it (but I'll
+do my best). Please note that version 0.05 (and above) of this module is
+NOT backwards compatible with previous versions.
 
 =head1 METHODS
 
@@ -142,25 +143,30 @@ sub new {
 	return bless $self, $class;
 }
 
-=head2 render( $tmpl_name, [\%context, $use_layout] )
+=head2 render( $tmpl_name, [\%_context, $use_layout] )
 
 Renders a template whose name is identified by C<$tmpl_name>. Remember that a prefix
 and a postfix might be added if they where set when creating the Tenjin instance.
 
-C<$context> is a hash-ref containing the variables that will be available for usage inside
-the templates. So, for example, if your C<\%context> is { message => 'Hi there }, then
-you can use C<$message> inside your templates.
+C<$_context> is a hash-ref containing the variables that will be available for usage inside
+the templates. So, for example, if your C<\%_context> is C<< { message => 'Hi there' } >>, then you can use C<$message> inside your templates.
 
 C<$use_layout> is a flag denoting whether or not to render this template into a layout
 template (when doing so, the template will be rendered, then the rendered output will be
-added to the context hash-ref as '_content', and finally the layout template will be rendered
-with the revised context and returned. If C<$use_layout> is 1, than Tenjin will use the
-layout template that was set when creating the Tenjin instance (via the 'layout' configuration
-option). If you want to use a different layout template (or if you haven't defined a layout
+added to the context hash-ref as '_content', and finally the layout template will be rendered with the revised context and returned.
+
+If C<$use_layout> is 1 (which is the default in case it is undefined),
+then Tenjin will use the layout template that was set when creating the
+Tenjin instance (via the 'layout' configuration option). If you want to use a different layout template (or if you haven't defined a layout
 template when creating the Tenjin instance), then you must add the layout template's name
-to the context as '_layout'. You can also just pass the layout template's name as C<$use_layout>,
-which has precendence over C<< $context->{_layout} >>. If C<$use_layout> is 0 or undefined,
-then a layout template will not be used, even if C<< $context->{_layout} >> is defined.
+to the context as '_layout'. You can also just pass the layout template's name as C<$use_layout>, but C<< $_context->{_layout} >> has precedence.
+
+If C<$use_layout> is 0, then a layout template will not be used,
+even if C<< $_context->{_layout} >> is defined.
+
+Note that you can nest layout templates as much as you like, but the only
+way to do so is by setting the layout template for each template in the
+nesting chain with C<< $_context->{_layout} >>.
 
 Please note that by default file templates are cached on disk (with a '.cache') extension.
 Tenjin automatically deprecates these cache files every 10 seconds. If you
@@ -170,42 +176,68 @@ variable with your preferred value.
 =cut
 
 sub render {
-	my ($self, $template_name, $context, $use_layout) = @_;
+	my ($self, $template_name, $_context, $use_layout) = @_;
 
-	$context ||= {};
-	$context->{'_engine'} = $self;
+	$_context ||= {};
+	$_context->{'_engine'} = $self;
 
-	my $template = $self->get_template($template_name, $context); # pass $context only for preprocessing
-	my $output = $template->_render($context);
-	die("*** ERROR: $template->{filename}\n", $@) if $@;
+	# use a layout template by default
+	$use_layout = 1 unless defined $use_layout;
 
-	# should we render inside a layout template?
-	if ($use_layout) {
-		# was a layout template name passed, or should we use the layout defined
-		# in when creating the engine instance?
-		my $layout_tmpl = $use_layout =~ m/^1$/ ? $self->{layout} : $use_layout;
-		$layout_tmpl ||= $context->{_layout};
+	# start rendering the template, and if use_layout is true
+	# then render the layout template with the original output, and
+	# keep doing so if the layout template in itself is nested
+	# inside other layout templates until there are no layouts left
+	my $output;
+	while ($template_name) {
+		# get the template
+		my $template = $self->get_template($template_name, $_context); # pass $_context only for preprocessing
 		
-		# make sure we have a layout template to render
-		return $output unless $layout_tmpl;
-
-		# add the output of the rendered template to the context as '_content'
-		# and remove the reference to the layout from the context (if present)
-		$context->{_content} = $output;
-		delete $context->{_layout};
+		# render the template and cache errors
+		$output = $template->_render($_context);
+		die("*** ERROR: $template->{filename}\n", $@) if $@;
 		
-		# render the layout template
-		$output = $self->get_template($layout_tmpl, $context)->_render($context);
-		die("*** ERROR: $layout_tmpl\n", $@) if $@;
+		# should we nest into a layout template?
+		# check if $use_layout is 0, and if so bolt
+		# check if $_context->{_layout} is defined, and if so use it
+		# if not, and $use_layout is the name of a template, use it
+		# if $use_layout is just 1, then use $self->{layout}
+		# if no layout has been found, loop will finish
+		last if defined $use_layout && $use_layout eq '0';
+		$template_name = delete $_context->{_layout} || $use_layout;
+		undef $use_layout; # undef so we don't nest infinitely
+		$template_name = $self->{layout} if $template_name && $template_name eq '1';
+
+		$_context->{_content} = $output;
 	}
 
+	# return the output
 	return $output;
 }
 
 =head2 register_template( $template_name, $template )
 
 Receives the name of a template and its L<Tenjin::Template> object
-and stores it in memory for usage by the engine.
+and stores it in memory for usage by the engine. This is useful if you
+need to use templates that are not stored on the file system, for example
+from a database.
+
+Note, however, that you need to pass a template object who's already been
+converted and compiled into Perl code, so if you have a template with a
+certain name and certain text, these are the steps you will need to perform:
+
+	# create a Tenjin instance
+	my $tenjin = Tenjin->new(\%options);
+	
+	# create an empty template object
+	my $template = Tenjin::Template->new();
+	
+	# compile template content into Perl code
+	$template->convert($tmpl_content);
+	$template->compile();
+
+	# register the template with the Tenjin instance
+	$tenjin->register_template($tmpl_name, $template);
 
 =cut
 
@@ -218,17 +250,17 @@ sub register_template {
 
 =head1 INTERNAL METHODS
 
-=head2 get_template( $template_name, $context )
+=head2 get_template( $template_name, $_context )
 
 Receives the name of a template and the context object and tries to find
 that template in the engine's memory. If it's not there, it will try to find
 it in the file system (the cache file might be loaded, if present). Returns
-the templates L<Tenjin::Template> object.
+the template's L<Tenjin::Template> object.
 
 =cut
 
 sub get_template {
-	my ($self, $template_name, $context) = @_;
+	my ($self, $template_name, $_context) = @_;
 
 	## get cached template
 	my $template = $self->{templates}->{$template_name};
@@ -240,7 +272,7 @@ sub get_template {
 	unless ($template) {
 		my $filename = $self->to_filename($template_name);
 		my $filepath = $self->find_template_file($filename);
-		$template = $self->create_template($filepath, $context);  # $context is passed only for preprocessor
+		$template = $self->create_template($filepath, $_context);  # $_context is passed only for preprocessor
 		$self->register_template($template_name, $template);
 	}
 
@@ -292,7 +324,7 @@ sub find_template_file {
 	die "Tenjin::Engine: \"$filename not found (path=$s)\".";
 }
 
-=head2 read_template_file( $template, $filename, $context )
+=head2 read_template_file( $template, $filename, $_context )
 
 Receives a template object and its absolute file path and reads that file.
 If preprocessing is on, preprocessing will take place using the provided
@@ -301,16 +333,16 @@ context object.
 =cut
 
 sub read_template_file {
-	my ($self, $template, $filename, $context) = @_;
+	my ($self, $template, $filename, $_context) = @_;
 
 	if ($self->{preprocess}) {
-		if (! defined($context) || ! $context->{_engine}) {
-			$context ||= {};
-			$context->{'_engine'} = $self;
+		if (! defined($_context) || ! $_context->{_engine}) {
+			$_context ||= {};
+			$_context->{'_engine'} = $self;
 		}
 		my $pp = $Tenjin::PREPROCESSOR_CLASS->new();
 		$pp->convert($template->_read_file($filename));
-		return $pp->render($context);
+		return $pp->render($_context);
 	}
 
 	return $template->_read_file($filename, 1);
@@ -367,7 +399,7 @@ sub load_cachefile {
 	$template->{script} = $cache;
 }
 
-=head2 create_template( $filename, $context )
+=head2 create_template( $filename, $_context )
 
 Receives an absolute path to a template file and the context object, reads
 the file, processes it (which may involve loading the template's cache file
@@ -377,7 +409,7 @@ object.
 =cut
 
 sub create_template {
-	my ($self, $filename, $context) = @_;
+	my ($self, $filename, $_context) = @_;
 
 	my $cachename = $self->cachename($filename);
 
@@ -385,9 +417,9 @@ sub create_template {
 	my $template = $class->new(undef, $self->{init_opts_for_template});
 
 	if (! $self->{cache}) {
-		$template->convert($self->read_template_file($template, $filename, $context), $filename);
+		$template->convert($self->read_template_file($template, $filename, $_context), $filename);
 	} elsif (! -f $cachename || (stat $cachename)[9] < (stat $filename)[9]) {
-		$template->convert($self->read_template_file($template, $filename, $context), $filename);
+		$template->convert($self->read_template_file($template, $filename, $_context), $filename);
 		$self->store_cachefile($cachename, $template);
 	} else {
 		$template->{filename} = $filename;
@@ -410,7 +442,7 @@ L<http://www.kuwata-lab.com/tenjin/pltenjin-examples.html> for examples, and
 L<http://www.kuwata-lab.com/tenjin/pltenjin-faq.html> for frequently asked questions.
 
 Note that the Perl version of Tenjin is refered to as plTenjin on the Tenjin website,
-and that, as oppose to this module, the website suggests using a .plhtml extension
+and that, as opposed to this module, the website suggests using a .plhtml extension
 for the templates instead of .html (this is entirely your choice).
 
 L<Tenjin::Template>, L<Catalyst::View::Tenjin>, L<Dancer::Template::Tenjin>.
@@ -444,21 +476,32 @@ accidentaly missing in version 0.05, and the ability to call the utility
 methods of L<Tenjin::Util> natively inside templates. You will want to
 remove your templates' .cache files when upgrading to 0.6 too.
 
-=head1 TODO
+=head1 AUTHOR
+
+The CPAN version of Tenjin was forked by Ido Perlmuter E<lt>ido at ido50.netE<gt>
+from version 0.0.2 of the original plTenjin, which is developed by Makoto Kuwata
+at L<http://www.kuwata-lab.com/tenjin/>.
+
+=head1 ACKNOWLEDGEMENTS
+
+I would like to thank the following people for their contributions:
 
 =over
 
-=item * Expand pod documentation and properly document the code, which is
-hard to understand as it is.
+=item * Makoto Kuwata
 
-=item * Create tests, adapted from the tests provided by the original Tenjin.
+The original developer of Tenjin.
+
+=item * John Beppu E<lt>beppu at cpan.orgE<gt>
+
+For introducing me to Tenjin and helping me understand the way it's designed.
+
+=item * Pedro Melo E<lt>melo at cpan.orgE<gt>
+
+For helping me understand the logic behind some of the original Tenjin aspects
+and helping me fix bugs and create tests.
 
 =back
-
-=head1 AUTHOR
-
-Tenjin is developed by Makoto Kuwata at L<http://www.kuwata-lab.com/tenjin/>.
-The CPAN version was tidied and CPANized from the original 0.0.2 source (with later updates from Makoto Kuwata's tenjin github repository) by Ido Perlmuter E<lt>ido@ido50.netE<gt>.
 
 =head1 BUGS
 
