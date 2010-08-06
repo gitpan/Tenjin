@@ -1,24 +1,25 @@
---- #YAML:1.0
-name:               Tenjin
-version:            0.061
-abstract:           Fast templating engine with support for embedded Perl.
+---
+abstract: 'Fast templating engine with support for embedded Perl.'
 author:
-    - Ido Perlmuter <ido@ido50.net>
-license:            perl
-distribution_type:  module
-configure_requires:
-    ExtUtils::MakeMaker:  0
+  - 'Ido Perlmuter <ido@ido50.net>'
 build_requires:
-    ExtUtils::MakeMaker:  0
-requires:
-    Encode:          0
-    HTML::Entities:  0
-    Test::More:      0
-no_index:
-    directory:
-        - t
-        - inc
-generated_by:       ExtUtils::MakeMaker version 6.55_02
+  Test::More: 0
+  Try::Tiny: 0
+configure_requires:
+  ExtUtils::MakeMaker: 6.31
+dynamic_config: 0
+generated_by: 'Dist::Zilla version 4.101900, CPAN::Meta::Converter version 2.102160'
+license: mit
 meta-spec:
-    url:      http://module-build.sourceforge.net/META-spec-v1.4.html
-    version:  1.4
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Tenjin
+requires:
+  Carp: 0
+  Fcntl: 0
+  HTML::Entities: 0
+  perl: 5.006
+resources:
+  homepage: http://github.com/ido50/Tenjin/tree
+  repository: git://github.com/ido50/Tenjin.git
+version: 0.062

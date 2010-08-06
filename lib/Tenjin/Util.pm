@@ -1,13 +1,19 @@
 package Tenjin::Util;
+BEGIN {
+  $Tenjin::Util::VERSION = '0.062';
+}
 
 use strict;
 use warnings;
-use Encode;
 use HTML::Entities;
 
 =head1 NAME
 
 Tenjin::Util - Utility methods for Tenjin.
+
+=head1 VERSION
+
+version 0.062
 
 =head1 SYNOPSIS
 
@@ -257,9 +263,7 @@ sub _decode_params {
 	return $s;
 }
 
-__PACKAGE__;
-
-__END__
+1;
 
 =head1 SEE ALSO
 
@@ -267,8 +271,11 @@ L<Tenjin>, L<Tenjin::Template>, L<Tenjin::Context>.
 
 =head1 AUTHOR
 
-Tenjin is developed by Makoto Kuwata at L<http://www.kuwata-lab.com/tenjin/>.
-The CPAN version was tidied and CPANized from the original 0.0.2 source (with later updates from Makoto Kuwata's tenjin github repository) by Ido Perlmuter E<lt>ido@ido50.netE<gt>.
+The CPAN version of Tenjin was forked by Ido Perlmuter E<lt>ido at ido50.netE<gt>
+from version 0.0.2 of the original plTenjin, which is developed by Makoto Kuwata
+at L<http://www.kuwata-lab.com/tenjin/>.
+
+Development of Tenjin is done with github at L<http://github.com/ido50/Tenjin>.
 
 =head1 LICENSE AND COPYRIGHT
 

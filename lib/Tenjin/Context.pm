@@ -1,12 +1,20 @@
 package Tenjin::Context;
+BEGIN {
+  $Tenjin::Context::VERSION = '0.062';
+}
 
 use strict;
 use warnings;
 use Tenjin::Util;
+use Carp;
 
 =head1 NAME
 
 Tenjin::Context - In charge of managing variables passed to Tenjin templates.
+
+=head1 VERSION
+
+version 0.062
 
 =head1 SYNOPSIS
 
@@ -63,23 +71,20 @@ sub new {
 	return bless $self, $class;
 }
 
-=head2 evaluate( $script, [$filename] )
+=head2 evaluate( $script, $template_name )
 
 This method receives a compiled template and actually performes the evaluation
 the renders it, then returning the rendered output. If Tenjin is configured
 to C<use strict>, the script will be C<eval>ed under C<use strict>.
 
-If the rendered template's filename is passed, a Perl comment noting that filename
-will be appended to the script prior to its evaluation.
-
 =cut
 
 sub evaluate {
-	my ($self, $script, $filename) = @_;
+	my ($self, $script, $name) = @_;
 
 	my $_context = $self;
 	$script = ($script =~ /\A.*\Z/s) && $& if $Tenjin::BYPASS_TAINT;
-	my $s = $filename ? "# line 1 \"$filename\"\n" : '';  # line directive
+	my $s = $name ? "# line 1 \"$name\"\n" : '';  # line directive
 	$s .= $script;
 
 	my $ret;
@@ -90,6 +95,8 @@ sub evaluate {
 		$ret = eval($s);
 		use strict;
 	}
+
+	croak "[Tenjin] Failed rendering $name: $@" if $@;
 	
 	return $ret;
 }
@@ -103,10 +110,10 @@ is called when compiling the template.
 =cut
 
 sub to_func {
-	my ($self, $script, $filename) = @_;
+	my ($self, $script, $name) = @_;
 
 	$script = ($script =~ /\A.*\Z/s) && $& if $Tenjin::BYPASS_TAINT;
-	my $s = $filename ? "# line 1 \"$filename\"\n" : '';  # line directive
+	my $s = $name ? "# line 1 \"$name\"\n" : '';  # line directive
 	$s .= "sub { my (\$_context) = \@_; $script }";
 	
 	my $ret;
@@ -117,6 +124,8 @@ sub to_func {
 		$ret = eval($s);
 		use strict;
 	}
+
+	croak "[Tenjin] Failed compiling $name: $@" if $@;
 	
 	return $ret;
 }
@@ -197,9 +206,7 @@ information.
 *tagattrs = *Tenjin::Util::tagattrs;
 *new_cycle = *Tenjin::Util::new_cycle;
 
-__PACKAGE__;
-
-__END__
+1;
 
 =head1 SEE ALSO
 
@@ -207,8 +214,11 @@ L<Tenjin>, L<Tenjin::Util>, L<Tenjin::Template>.
 
 =head1 AUTHOR
 
-Tenjin is developed by Makoto Kuwata at L<http://www.kuwata-lab.com/tenjin/>.
-The CPAN version was tidied and CPANized from the original 0.0.2 source (with later updates from Makoto Kuwata's tenjin github repository) by Ido Perlmuter E<lt>ido@ido50.netE<gt>.
+The CPAN version of Tenjin was forked by Ido Perlmuter E<lt>ido at ido50.netE<gt>
+from version 0.0.2 of the original plTenjin, which is developed by Makoto Kuwata
+at L<http://www.kuwata-lab.com/tenjin/>.
+
+Development of Tenjin is done with github at L<http://github.com/ido50/Tenjin>.
 
 =head1 LICENSE AND COPYRIGHT
 

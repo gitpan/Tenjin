@@ -1,13 +1,16 @@
 package Tenjin;
+BEGIN {
+  $Tenjin::VERSION = '0.062';
+}
+
+use strict;
+use warnings;
+use Carp;
 
 use Tenjin::Context;
 use Tenjin::Template;
 use Tenjin::Preprocessor;
 
-use strict;
-use warnings;
-
-our $VERSION = 0.061;
 our $USE_STRICT = 0;
 our $ENCODING = 'utf8';
 our $BYPASS_TAINT   = 1; # unset if you like taint mode
@@ -16,9 +19,15 @@ our $CONTEXT_CLASS  = 'Tenjin::Context';
 our $PREPROCESSOR_CLASS = 'Tenjin::Preprocessor';
 our $TIMESTAMP_INTERVAL = 10;
 
+# ABSTRACT: Fast templating engine with support for embedded Perl.
+
 =head1 NAME
 
 Tenjin - Fast templating engine with support for embedded Perl.
+
+=head1 VERSION
+
+version 0.062
 
 =head1 SYNOPSIS
 
@@ -38,10 +47,6 @@ Tenjin - Fast templating engine with support for embedded Perl.
 	my $filename = 'file.html';
 	my $output = $engine->render($filename, $context);
 	print $output;
-
-=head1 VERSION
-
-0.061
 
 =head1 DESCRIPTION
 
@@ -193,9 +198,8 @@ sub render {
 		# get the template
 		my $template = $self->get_template($template_name, $_context); # pass $_context only for preprocessing
 		
-		# render the template and cache errors
-		$output = $template->_render($_context);
-		die("*** ERROR: $template->{filename}\n", $@) if $@;
+		# render the template
+		$output = $template->render($_context);
 		
 		# should we nest into a layout template?
 		# check if $use_layout is 0, and if so bolt
@@ -272,7 +276,7 @@ sub get_template {
 	unless ($template) {
 		my $filename = $self->to_filename($template_name);
 		my $filepath = $self->find_template_file($filename);
-		$template = $self->create_template($filepath, $_context);  # $_context is passed only for preprocessor
+		$template = $self->create_template($filepath, $template_name, $_context);  # $_context is passed only for preprocessor
 		$self->register_template($template_name, $template);
 	}
 
@@ -321,7 +325,7 @@ sub find_template_file {
 		return $filename if -f $filename;
 	}
 	my $s = $path ? ("['" . join("','", @$path) . "']") : '[]';
-	die "Tenjin::Engine: \"$filename not found (path=$s)\".";
+	croak "[Tenjin] $filename not found in path (path is $s).";
 }
 
 =head2 read_template_file( $template, $filename, $_context )
@@ -409,12 +413,12 @@ object.
 =cut
 
 sub create_template {
-	my ($self, $filename, $_context) = @_;
+	my ($self, $filename, $template_name, $_context) = @_;
 
 	my $cachename = $self->cachename($filename);
 
 	my $class = $self->{templateclass} || $Tenjin::TEMPLATE_CLASS;
-	my $template = $class->new(undef, $self->{init_opts_for_template});
+	my $template = $class->new(undef, $template_name, $self->{init_opts_for_template});
 
 	if (! $self->{cache}) {
 		$template->convert($self->read_template_file($template, $filename, $_context), $filename);
@@ -430,9 +434,7 @@ sub create_template {
 	return $template;
 }
 
-__PACKAGE__;
-
-__END__
+1;
 
 =head1 SEE ALSO
 
@@ -481,6 +483,8 @@ remove your templates' .cache files when upgrading to 0.6 too.
 The CPAN version of Tenjin was forked by Ido Perlmuter E<lt>ido at ido50.netE<gt>
 from version 0.0.2 of the original plTenjin, which is developed by Makoto Kuwata
 at L<http://www.kuwata-lab.com/tenjin/>.
+
+Development of Tenjin is done with github at L<http://github.com/ido50/Tenjin>.
 
 =head1 ACKNOWLEDGEMENTS
 

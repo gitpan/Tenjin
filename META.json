@@ -1,0 +1,48 @@
+{
+   "abstract" : "Fast templating engine with support for embedded Perl.",
+   "author" : [
+      "Ido Perlmuter <ido@ido50.net>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Dist::Zilla version 4.101900, CPAN::Meta::Converter version 2.102160",
+   "license" : [
+      "mit"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "Tenjin",
+   "prereqs" : {
+      "configure" : {
+         "requires" : {
+            "ExtUtils::MakeMaker" : "6.31"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "Carp" : 0,
+            "Fcntl" : 0,
+            "HTML::Entities" : 0,
+            "perl" : "5.006"
+         }
+      },
+      "test" : {
+         "requires" : {
+            "Test::More" : 0,
+            "Try::Tiny" : 0
+         }
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "homepage" : "http://github.com/ido50/Tenjin/tree",
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/ido50/Tenjin.git",
+         "web" : "http://github.com/ido50/Tenjin/tree"
+      }
+   },
+   "version" : "0.062"
+}
+
