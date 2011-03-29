@@ -28,7 +28,7 @@ my %WriteMakefileArgs = (
     'Fcntl' => '0',
     'HTML::Entities' => '0'
   },
-  'VERSION' => '0.070',
+  'VERSION' => '0.070001',
   'test' => {
     'TESTS' => 't/*.t'
   }

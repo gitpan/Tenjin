@@ -5,13 +5,16 @@ use warnings;
 use Tenjin::Util;
 use Carp;
 
+our $VERSION = "0.070001";
+$VERSION = eval $VERSION;
+
 =head1 NAME
 
 Tenjin::Context - In charge of managing variables passed to Tenjin templates.
 
 =head1 VERSION
 
-version 0.070
+version 0.070001
 
 =head1 SYNOPSIS
 

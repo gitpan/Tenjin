@@ -10,7 +10,7 @@ use Tenjin::Context;
 use Tenjin::Template;
 use Tenjin::Preprocessor;
 
-our $VERSION = "0.070";
+our $VERSION = "0.070001";
 $VERSION = eval $VERSION;
 
 our $USE_STRICT = 0;
@@ -27,7 +27,7 @@ Tenjin - Fast templating engine with support for embedded Perl.
 
 =head1 VERSION
 
-version 0.070
+version 0.070001
 
 =head1 SYNOPSIS
 

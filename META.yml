@@ -23,4 +23,4 @@ requires:
 resources:
   homepage: http://github.com/ido50/Tenjin/tree
   repository: git://github.com/ido50/Tenjin.git
-version: 0.070
+version: 0.070001

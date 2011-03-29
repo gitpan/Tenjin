@@ -4,13 +4,16 @@ use strict;
 use warnings;
 use HTML::Entities;
 
+our $VERSION = "0.070001";
+$VERSION = eval $VERSION;
+
 =head1 NAME
 
 Tenjin::Util - Utility methods for Tenjin.
 
 =head1 VERSION
 
-version 0.070
+version 0.070001
 
 =head1 SYNOPSIS
 

@@ -2,7 +2,7 @@ NAME
     Tenjin - Fast templating engine with support for embedded Perl.
 
 VERSION
-    version 0.070
+    version 0.070001
 
 SYNOPSIS
             use Tenjin;
