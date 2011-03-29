@@ -1,7 +1,4 @@
 package Tenjin::Preprocessor;
-BEGIN {
-  $Tenjin::Preprocessor::VERSION = '0.062';
-}
 
 use strict;
 use warnings;
@@ -14,7 +11,7 @@ Tenjin::Preprocessor - Preprocessing Tenjin templates
 
 =head1 VERSION
 
-version 0.062
+version 0.070
 
 =head1 SYNOPSIS
 

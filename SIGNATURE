@@ -1,0 +1,64 @@
+This file contains message digests of all files listed in MANIFEST,
+signed via the Module::Signature module, version 0.66.
+
+To verify the content in this distribution, first make sure you have
+Module::Signature installed, then type:
+
+    % cpansign -v
+
+It will check each file's integrity, as well as the signature's
+validity.  If "==> Signature verified OK! <==" is not displayed,
+the distribution may already have been compromised, and you should
+not run its Makefile.PL or Build.PL.
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
+
+SHA1 f01c907c5f722e9735943d93cb9ccb8787fe36ef Changes
+SHA1 35814390224523dbc9fe9716d68108e716efe4ba INSTALL
+SHA1 bc61466b838ff3af476872ee5af8191eb60c438b LICENSE
+SHA1 3d6f233b8658897ffe28bef682ba96123b94a8fe MANIFEST
+SHA1 c0190915e1111538791804fa3b0881742a5ff7b3 MANIFEST.SKIP
+SHA1 b97d1bb28df2c277ee7c36ae56994e6e56aac2aa META.json
+SHA1 96af64e2f4f92e62c7aa941e64d9929bf521fa8c META.yml
+SHA1 4c1bfdd750b67d5f722cf16118f832330a3fc47e Makefile.PL
+SHA1 8f2ccc609189acea2e7dd99e1eb0f0c9bd56ea22 README
+SHA1 fae71f7642e90cf94e33e4e32ae0ca8bf6174b4e dist.ini
+SHA1 2aea779b414b527d3f6f02aa40e8373a473277ad lib/Tenjin.pm
+SHA1 cb2783f61ea3b3f95a09080d5f6025001dc28fac lib/Tenjin/Context.pm
+SHA1 c68f55ada634dd5812419b4888bb11bbd175fd0d lib/Tenjin/Preprocessor.pm
+SHA1 afb4ee3cf1bb17578260cfa5ec0729e524d6e233 lib/Tenjin/Template.pm
+SHA1 d8e767996c43265bffe2f6c2bf9939a1ca73150e lib/Tenjin/Util.pm
+SHA1 495a30673bfbbce86c789ed72c31b16f19897a06 t/00-load.t
+SHA1 8caa16aeb9f7fb1ad2cd946ecd1d4f4ceb35a310 t/01-nested_layouts.t
+SHA1 c63cdc538dd9b0d6341931d5ad318310c1d7e319 t/02-layout_precedence.t
+SHA1 e5f6c287a673c15f2a83f4c306d61759d141ee34 t/03-capture_placeholder.t
+SHA1 6705a60b891d5ab41ef23642c6d34b6bcccbca2e t/04-utils.t
+SHA1 c29c857ffc3fb9b58aac7c7a8ae554929e5a75b6 t/05-fail.t
+SHA1 e844ee1fd4b2adda1a798945c3580429f07bf820 t/06-encoding.t
+SHA1 95e39906fd0d19d69b2ab77df798e92f4714df60 t/data/capture_placeholder/capture.html
+SHA1 73b8a2539512809a674467c1c28212668c682975 t/data/capture_placeholder/placeholder.html
+SHA1 be3174ec87b22b9908459ed9578db8e3e94a05d5 t/data/encoding/chinese.html
+SHA1 4dc53f13601fa18b648ef169a9a0cd5ebe1703de t/data/encoding/hebrew.html
+SHA1 b92b90fe0759237c737a068c50efc47e71ddf8f2 t/data/fail/fail.html
+SHA1 356a192b7913b04c54574d18c28d46e6395428ab t/data/fail/no_fail.html
+SHA1 664e8a0b85a27c0b9dfa86e6fd84ce27ff3a235b t/data/layout_precedence/content.html
+SHA1 d754f3840b84ac364f72cbecf3b2209e7443ed1c t/data/layout_precedence/context_layout.html
+SHA1 6679123c114cf2bd6e16c9c0e65afbbc3450dadb t/data/layout_precedence/instance_layout.html
+SHA1 acfe367f998dbce265b5c3343ce2620dba83d5ae t/data/layout_precedence/render_layout.html
+SHA1 c30a4b043ab481a0a27b9c00848ff6d1d4607cb0 t/data/nested_layouts/inside_layout.html
+SHA1 d6d3520668636fbf14112e7297247daee9fc7c78 t/data/nested_layouts/outside_layout.html
+SHA1 d8c67fe4bea6ba790066ab65e23c65e1f4ddb151 t/data/nested_layouts/top.html
+SHA1 6789b494c6797133bb0d38985426b0be0a9a1cec t/data/utils/encode_url.html
+SHA1 0d6662d870015860fd4fd70cae07d7a6c8dc46eb t/data/utils/escape_xml.html
+SHA1 569f290287f6a3360ccec467fae190775b905ca6 t/data/utils/pP.html
+SHA1 87768d177f8c2e2df9c591cde869e7c8a245555e t/release-dist-manifest.t
+SHA1 9433c240fe590bc404ab68ff63984df763e347ed t/release-pod-coverage.t
+SHA1 b30cbdfaf935017c4568c0c91b242438cb87786e t/release-pod-syntax.t
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iF4EAREIAAYFAk2SM4UACgkQa4OHQAFM10fbSAD8Drh6qbG8ty8B1sWGNMr7RLSf
+I4j8HrzEC3StYGD3WUgBAI0avuc0JBHm/i380BSZZwSGP/OaZ1nhpB257UP3SDTE
+=iboP
+-----END PGP SIGNATURE-----

@@ -1,7 +1,4 @@
 package Tenjin::Context;
-BEGIN {
-  $Tenjin::Context::VERSION = '0.062';
-}
 
 use strict;
 use warnings;
@@ -14,7 +11,7 @@ Tenjin::Context - In charge of managing variables passed to Tenjin templates.
 
 =head1 VERSION
 
-version 0.062
+version 0.070
 
 =head1 SYNOPSIS
 

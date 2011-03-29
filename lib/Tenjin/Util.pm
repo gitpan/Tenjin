@@ -1,7 +1,4 @@
 package Tenjin::Util;
-BEGIN {
-  $Tenjin::Util::VERSION = '0.062';
-}
 
 use strict;
 use warnings;
@@ -13,7 +10,7 @@ Tenjin::Util - Utility methods for Tenjin.
 
 =head1 VERSION
 
-version 0.062
+version 0.070
 
 =head1 SYNOPSIS
 

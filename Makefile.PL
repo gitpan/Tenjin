@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-BEGIN { require 5.006; }
+BEGIN { require 5.008; }
 
 use ExtUtils::MakeMaker 6.31;
 
@@ -13,7 +13,8 @@ my %WriteMakefileArgs = (
   'AUTHOR' => 'Ido Perlmuter <ido@ido50.net>',
   'BUILD_REQUIRES' => {
     'Test::More' => '0',
-    'Try::Tiny' => '0'
+    'Try::Tiny' => '0',
+    'utf8' => '0'
   },
   'CONFIGURE_REQUIRES' => {
     'ExtUtils::MakeMaker' => '6.31'
@@ -27,7 +28,7 @@ my %WriteMakefileArgs = (
     'Fcntl' => '0',
     'HTML::Entities' => '0'
   },
-  'VERSION' => '0.062',
+  'VERSION' => '0.070',
   'test' => {
     'TESTS' => 't/*.t'
   }

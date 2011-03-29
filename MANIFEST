@@ -1,4 +1,5 @@
 Changes
+INSTALL
 LICENSE
 MANIFEST
 MANIFEST.SKIP
@@ -6,6 +7,7 @@ META.json
 META.yml
 Makefile.PL
 README
+SIGNATURE
 dist.ini
 lib/Tenjin.pm
 lib/Tenjin/Context.pm
@@ -18,8 +20,11 @@ t/02-layout_precedence.t
 t/03-capture_placeholder.t
 t/04-utils.t
 t/05-fail.t
+t/06-encoding.t
 t/data/capture_placeholder/capture.html
 t/data/capture_placeholder/placeholder.html
+t/data/encoding/chinese.html
+t/data/encoding/hebrew.html
 t/data/fail/fail.html
 t/data/fail/no_fail.html
 t/data/layout_precedence/content.html
@@ -32,6 +37,6 @@ t/data/nested_layouts/top.html
 t/data/utils/encode_url.html
 t/data/utils/escape_xml.html
 t/data/utils/pP.html
-t/manifest.t
+t/release-dist-manifest.t
 t/release-pod-coverage.t
 t/release-pod-syntax.t
